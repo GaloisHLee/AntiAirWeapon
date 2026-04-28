@@ -1,0 +1,23 @@
+﻿<ModMetaData>
+	<name>Anti-Air Weapon</name>
+	<author>AKreedz</author>
+	<packageId>AKreedz.AntiAirWeapon</packageId>
+	<url>https://github.com/AKreedz/AntiAirWeapon</url>
+	<supportedVersions>
+		<li>1.6</li>
+	</supportedVersions>
+	<description>Anti-air defenses for RimWorld, updated to intercept hostile drop pods and hostile projectiles while supporting configurable interception rules for modded flying targets.</description>
+	<modDependencies>
+		<li>
+			<packageId>unlimitedhugs.hugslib</packageId>
+			<displayName>HugsLib</displayName>
+			<steamWorkshopUrl>steam://url/CommunityFilePage/818773962</steamWorkshopUrl>
+		</li>
+	</modDependencies>
+	<loadAfter>
+		<li>unlimitedhugs.hugslib</li>
+		<li>Ludeon.RimWorld</li>
+		<li>Ludeon.RimWorld.Royalty</li>
+		<li>rwmt.multiplayer</li>
+	</loadAfter>
+</ModMetaData>

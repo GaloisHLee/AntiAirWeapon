@@ -1,0 +1,31 @@
+# Build outputs
+bin/
+obj/
+dist/
+artifacts/
+TestResults/
+
+# Local references copied from game installs
+References/
+
+# IDE and OS files
+.DS_Store
+Thumbs.db
+.vs/
+.vscode/
+*.user
+*.csproj.user
+*.suo
+*.sln.docstates
+*.swp
+*.orig
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*.pidb
+*.mdb
+
+# Local workshop packages
+2802147499.zip

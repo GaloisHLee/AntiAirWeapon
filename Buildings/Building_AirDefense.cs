@@ -138,7 +138,7 @@ namespace AntiAirWeapon.Buildings
 		}
 
 		// Token: 0x06000017 RID: 23 RVA: 0x00002D48 File Offset: 0x00000F48
-		public override void Tick()
+		protected override void Tick()
 		{
 			base.Tick();
 			this.doTurretTick();
@@ -181,87 +181,45 @@ namespace AntiAirWeapon.Buildings
 					bool canShotProjectile = this.topSizeComp.Props.canShotProjectile;
 					bool canShotPod = this.topSizeComp.Props.canShotPod;
 					AllMapProjectileStorage aps = AntiAirWeaponModBase.Instance._AllMapProjectileStorage;
-					Thing atkTarget = null;
-					List<Thing> atkList = aps.mapAndThings;//.TryGetValue(this.Map.Index );
-					if (atkList != null)
-					{
-						//Log.Message("正在寻找目标！"+canShotProjectile+"/"+canShotPod);
-						//test
-						for (int i=0;i<atkList.Count;i++) {
-							Thing a = atkList[i];
-							string aRes = "";// "目标("+a+")结果:";
-							
-							if (aps.invalidThing(a)) {
-								aRes += "不合法|";
-								atkList.RemoveAt(i);
-								i--;
-									
-							}
-							if (!inMySight(a)) {
-								aRes += "超出|";	
-							}
-							string targetString = "";
-							bool podBool = false;
-							var projectileBool = false;
-							if (canShotPod) {
-								if ((a is Skyfaller) == false)
-								{
-									targetString += "不是sf|";
-
-								}
-								else {
-									podBool = true;
-								}
-							}
-							if (canShotProjectile)
+						Thing atkTarget = null;
+						List<Thing> atkList = aps.mapAndThings;//.TryGetValue(this.Map.Index );
+						if (atkList != null)
+						{
+							//Log.Message("正在寻找目标！"+canShotProjectile+"/"+canShotPod);
+							//test
+							for (int i = 0; i < atkList.Count; i++)
 							{
-								if ((a is Projectile) == false)
-								{
-									targetString += "不是pj|";
-								}
-								else
-								{
-						
-									projectileBool = true;
-								}
-							}
-							if (!projectileBool&&!podBool) {
-								aRes += targetString;
-							}
-							//派系判断
-							Faction af = a.Faction;
-							if (a is Projectile) {
-								af = (a as Projectile).Launcher.Faction;
-							}
-							if (a is IActiveDropPod && af==null) {
-                                try {
-									Thing innerThing = (a as IActiveDropPod).Contents.innerContainer.First(tt => tt != null && tt.Faction != null);
-									if (innerThing != null)
-									{
-										af = innerThing.Faction;
-									}
-								}
-								catch(Exception) { }
-								
-								
-							}
-							 
-							if (!this.Faction.HostileTo(af)) {
-								aRes += "非敌对派系("+this.Faction+","+af+")|";
-							}
+								Thing a = atkList[i];
+								string aRes = "";// "目标("+a+")结果:";
 
-							if (aRes != "")
-							{
-								//Log.Message("目标(" + a + ")结果:" + aRes);
-								continue;
-							}
-							else {
+								if (aps.invalidThing(a))
+								{
+									atkList.RemoveAt(i);
+									i--;
+									continue;
+								}
+								if (!inMySight(a))
+								{
+									aRes += "超出|";
+								}
+
+								string targetReason;
+								if (!this.shouldInterceptTarget(a, canShotProjectile, canShotPod, out targetReason))
+								{
+									aRes += targetReason;
+								}
+
+								if (aRes != "")
+								{
+									//Log.Message("目标(" + a + ")结果:" + aRes);
+									continue;
+								}
+
 								atkTarget = a;
 							}
-						}
 
-						/*
-						atkTarget = atkList.Find(a=> !aps.invalidThing(a) && inMySight(a)&&
+							/*
+							atkTarget = atkList.Find(a=> !aps.invalidThing(a) && inMySight(a)&&
 							(
 							
 							 canShotProjectile ?a.def.projectile!=null:false ||
@@ -292,11 +250,12 @@ namespace AntiAirWeapon.Buildings
 		}
 
 		//是否在可攻击范围内
-		private bool inMySight(Thing t) {
-			if (t.Map!=this.Map) { return false; }
+		private bool inMySight(Thing t)
+		{
+			if (t.Map != this.Map) { return false; }
 			IntVec3 tp = t.Position;
 			IntVec3 mp = this.Position;
-			
+
 			//X Z
 			float rangeSqrt = Mathf.Abs(Mathf.Pow( (tp.x - mp.x),2) + Mathf.Pow( (tp.z - mp.z),2));
 			float mySqrt= Mathf.Pow(this.range,2);
@@ -304,8 +263,120 @@ namespace AntiAirWeapon.Buildings
 			//Log.Message("MP:"+mp);
 			//Log.Message("TP:" + tp);
 			return rangeSqrt <= mySqrt;
+		}
 
+		private bool shouldInterceptTarget(Thing target, bool canShotProjectile, bool canShotPod, out string reason)
+		{
+			reason = string.Empty;
+			AntiAirWeaponModBase mod = AntiAirWeaponModBase.Instance;
+			if (target == null || mod == null)
+			{
+				reason = "无效目标|";
+				return false;
+			}
+			bool isProjectile = target is Projectile;
+			bool isActiveDropPod = target is IActiveTransporter;
+			bool isSkyfaller = target is Skyfaller;
+			if (isProjectile && !canShotProjectile)
+			{
+				reason = "炮塔不可拦截炮弹|";
+				return false;
+			}
+			if ((isActiveDropPod || isSkyfaller) && !canShotPod)
+			{
+				reason = "炮塔不可拦截飞行舱|";
+				return false;
+			}
+			if (mod.ShouldNeverIntercept(target))
+			{
+				reason = "配置忽略|";
+				return false;
+			}
+			if (mod.ShouldAlwaysIntercept(target))
+			{
+				return true;
+			}
 
+			Faction targetFaction = this.resolveTargetFaction(target);
+			bool hostileToTurret = this.isHostileToTurret(targetFaction);
+			if (mod.ShouldInterceptIfHostile(target))
+			{
+				reason = hostileToTurret ? string.Empty : "自定义目标非敌对|";
+				return hostileToTurret;
+			}
+
+			if (isProjectile)
+			{
+				if (!mod.InterceptHostileProjectiles)
+				{
+					reason = "配置禁用炮弹拦截|";
+					return false;
+				}
+				reason = hostileToTurret ? string.Empty : "炮弹非敌对或无法识别|";
+				return hostileToTurret;
+			}
+
+			if (isActiveDropPod)
+			{
+				if (!mod.InterceptHostilePods)
+				{
+					reason = "配置禁用飞行舱拦截|";
+					return false;
+				}
+				reason = hostileToTurret ? string.Empty : "飞行舱非敌对或无法识别|";
+				return hostileToTurret;
+			}
+
+			if (isSkyfaller)
+			{
+				if (!mod.InterceptUnknownSkyfallers)
+				{
+					reason = "未知 Skyfaller 默认忽略|";
+					return false;
+				}
+				return true;
+			}
+
+			reason = "不支持的飞行物|";
+			return false;
+		}
+
+		private Faction resolveTargetFaction(Thing target)
+		{
+			if (target == null)
+			{
+				return null;
+			}
+
+			Faction targetFaction = target.Faction;
+			Projectile projectile = target as Projectile;
+			if (projectile != null)
+			{
+				return projectile.Launcher != null ? projectile.Launcher.Faction : targetFaction;
+			}
+
+			IActiveTransporter activeDropPod = target as IActiveTransporter;
+			if (activeDropPod != null && targetFaction == null)
+			{
+				try
+				{
+					Thing innerThing = activeDropPod.Contents.innerContainer.FirstOrDefault(tt => tt != null && tt.Faction != null);
+					if (innerThing != null)
+					{
+						targetFaction = innerThing.Faction;
+					}
+				}
+				catch (Exception)
+				{
+				}
+			}
+
+			return targetFaction;
+		}
+
+		private bool isHostileToTurret(Faction targetFaction)
+		{
+			return this.Faction != null && targetFaction != null && this.Faction.HostileTo(targetFaction);
 		}
 
 
@@ -409,10 +480,10 @@ namespace AntiAirWeapon.Buildings
 		public void destoryAir(Thing t)
 		{
 			
-			ActiveDropPodInfo adpi = null;
-			if (t is IActiveDropPod)
+			ActiveTransporterInfo adpi = null;
+			if (t is IActiveTransporter)
 			{
-				adpi = (t as IActiveDropPod).Contents;
+				adpi = (t as IActiveTransporter).Contents;
 			}
 			
 			if (adpi!=null)
@@ -467,7 +538,11 @@ namespace AntiAirWeapon.Buildings
 						}
 					}
 					GenPlace.TryPlaceThing(thing2, t.Position, base.Map, ThingPlaceMode.Near, null, null);
-					SoundDefOf.DropPod_Open.PlayOneShot(new TargetInfo(thing2));
+						SoundDef dropPodOpenSound = DefDatabase<SoundDef>.GetNamed("DropPod_Open", false);
+						if (dropPodOpenSound != null)
+						{
+							dropPodOpenSound.PlayOneShot(new TargetInfo(thing2));
+						}
 				}
 				for (int j = 0; j < 3; j++)
 				{
@@ -480,7 +555,7 @@ namespace AntiAirWeapon.Buildings
 				bool flag6 = t is Skyfaller && (t as Skyfaller).def.defName == "CrashedShipPartIncoming";
 				if (flag6)
 				{
-					GenExplosion.DoExplosion(t.Position, t.Map, 2f, DamageDefOf.Bomb, this, 3, -1f, DefDatabase<SoundDef>.GetNamed("Explosion_Bomb", true), null, null, t, null, 0f, 1, false, null, 0f, 1, 0f, false);
+						GenExplosion.DoExplosion(t.Position, t.Map, 2f, DamageDefOf.Bomb, this, 3, -1f, DefDatabase<SoundDef>.GetNamed("Explosion_Bomb", true), null, null, t);
 					for (int k = 0; k < 15; k++)
 					{
 						Thing thing4 = ThingMaker.MakeThing(ThingDefOf.ChunkSlagSteel, null);
@@ -528,7 +603,7 @@ namespace AntiAirWeapon.Buildings
 		}
 
 		// Token: 0x06000022 RID: 34 RVA: 0x00003B1F File Offset: 0x00001D1F
-		public override void Draw()
+		protected override void DrawAt(Vector3 drawLoc, bool flip = false)
 		{
 			this.top.DrawTurret();
 			base.Comps_PostDraw();

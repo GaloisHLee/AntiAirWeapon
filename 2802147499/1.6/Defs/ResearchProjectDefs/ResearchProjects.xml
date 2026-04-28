@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ResearchProjectDef>
+    <tab>AntiAirWeapon</tab>
+    <defName>SimpleAntiAirWeapon</defName>
+    <label>Simple Anti-Air Weapon</label>
+    <description>Learn to build Simple Anti-Air Weapon.</description>
+    <baseCost>1500</baseCost>
+    <techLevel>Industrial</techLevel>
+    <prerequisites>
+      <li>MultiAnalyzer</li>
+    </prerequisites>
+    <researchViewX>0</researchViewX>
+    <researchViewY>1</researchViewY>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <requiredResearchFacilities>
+      <li>MultiAnalyzer</li>
+    </requiredResearchFacilities>
+  </ResearchProjectDef>
+  
+  <ResearchProjectDef>
+    <tab>AntiAirWeapon</tab>
+    <defName>AdvanceAntiAirWeapon</defName>
+    <label>Advance Anti-Air Weapon</label>
+    <description>Learn to build Advance Anti-Air Weapon.</description>
+    <baseCost>2000</baseCost>
+    <techLevel>Industrial</techLevel>
+    <prerequisites>
+      <li>SimpleAntiAirWeapon</li>
+    </prerequisites>
+    <researchViewX>0</researchViewX>
+    <researchViewY>2</researchViewY>
+    <requiredResearchBuilding>HiTechResearchBench</requiredResearchBuilding>
+    <requiredResearchFacilities>
+      <li>MultiAnalyzer</li>
+    </requiredResearchFacilities>
+  </ResearchProjectDef>
+  
+  
+</Defs>
