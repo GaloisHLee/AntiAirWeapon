@@ -1,12 +1,11 @@
 ﻿<ModMetaData>
-	<name>Anti-Air Weapon</name>
-	<author>AKreedz</author>
-	<packageId>AKreedz.AntiAirWeapon</packageId>
-	<url>https://github.com/AKreedz/AntiAirWeapon</url>
+	<name>AntiAirWeapon[forked]</name>
+	<author>AKreedz; Cred Mao (fork maintainer)</author>
+	<packageId>credmao.antiairweapon.forked</packageId>
 	<supportedVersions>
 		<li>1.6</li>
 	</supportedVersions>
-	<description>Anti-air defenses for RimWorld, updated to intercept hostile drop pods and hostile projectiles while supporting configurable interception rules for modded flying targets.</description>
+	<description>Fork of Anti-Air Weapon by AKreedz for RimWorld 1.6. Adds Harmony 2 compatibility, HugsLib 1.6 build fixes, improved hostile projectile and drop pod interception, and a searchable target selector for modded flying targets. Original project: https://github.com/AKreedz/AntiAirWeapon</description>
 	<modDependencies>
 		<li>
 			<packageId>brrainz.harmony</packageId>
@@ -26,4 +25,7 @@
 		<li>Ludeon.RimWorld.Royalty</li>
 		<li>rwmt.multiplayer</li>
 	</loadAfter>
+	<incompatibleWith>
+		<li>AKreedz.AntiAirWeapon</li>
+	</incompatibleWith>
 </ModMetaData>

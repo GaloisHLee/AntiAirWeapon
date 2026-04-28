@@ -30,7 +30,7 @@
   <HitADAOnlyOne>你不能擁有超過 1 個貿易船毀滅者</HitADAOnlyOne>
   <MustPlaceOnHugeADA>必須放置在巨型防空炮上!</MustPlaceOnHugeADA>
 
-  <AntiAirWeapon_SettingsTitle>防空武器</AntiAirWeapon_SettingsTitle>
+  <AntiAirWeapon_SettingsTitle>防空武器[forked]</AntiAirWeapon_SettingsTitle>
   <AntiAirWeapon_ResetToDefaults>重置為預設值</AntiAirWeapon_ResetToDefaults>
   <AntiAirWeapon_SkyfallerList>可擊落的空投目標(高級炮塔):</AntiAirWeapon_SkyfallerList>
   <AntiAirWeapon_Add>新增...</AntiAirWeapon_Add>

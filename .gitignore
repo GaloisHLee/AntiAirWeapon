@@ -4,6 +4,8 @@ obj/
 dist/
 artifacts/
 TestResults/
+.dotnet-home/
+.nuget/
 
 # Local references copied from game installs
 References/
@@ -29,3 +31,4 @@ Thumbs.db
 
 # Local workshop packages
 2802147499.zip
+AntiAirWeaponForked/

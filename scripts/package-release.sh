@@ -1,15 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PACKAGE_ROOT="$ROOT_DIR/artifacts/release/AntiAirWeapon"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PACKAGE_ROOT="$ROOT_DIR/artifacts/release/AntiAirWeaponForked"
 ASSEMBLY_SOURCE="$ROOT_DIR/dist/Assemblies/AntiAirWeapon.dll"
 PDB_SOURCE="$ROOT_DIR/dist/Assemblies/AntiAirWeapon.pdb"
 VERSIONED_ROOT="$PACKAGE_ROOT/1.6"
-ZIP_PATH="$ROOT_DIR/artifacts/release/AntiAirWeapon.zip"
-STEAM_TEST_ROOT="$ROOT_DIR/2802147499"
+ZIP_PATH="$ROOT_DIR/artifacts/release/AntiAirWeaponForked.zip"
+STEAM_TEST_ROOT="$ROOT_DIR/AntiAirWeaponForked"
 
-"$ROOT_DIR/build-local.sh" Release
+"$SCRIPT_DIR/build-local.sh" Release
 
 rm -rf "$PACKAGE_ROOT"
 mkdir -p "$PACKAGE_ROOT" "$VERSIONED_ROOT/Assemblies"
@@ -28,6 +29,7 @@ fi
 cp "$ROOT_DIR/README.md" "$PACKAGE_ROOT/README.md"
 cp "$ROOT_DIR/LICENSE" "$PACKAGE_ROOT/LICENSE"
 cp "$ROOT_DIR/LICENSE.zh-CN.md" "$PACKAGE_ROOT/LICENSE.zh-CN.md"
+cp "$ROOT_DIR/WORKSHOP_DESCRIPTION.md" "$PACKAGE_ROOT/WORKSHOP_DESCRIPTION.md"
 
 mkdir -p "$STEAM_TEST_ROOT"
 rm -rf \
@@ -37,7 +39,8 @@ rm -rf \
   "$STEAM_TEST_ROOT/Sounds" \
   "$STEAM_TEST_ROOT/Textures" \
   "$STEAM_TEST_ROOT/LICENSE" \
-  "$STEAM_TEST_ROOT/LICENSE.zh-CN.md"
+  "$STEAM_TEST_ROOT/LICENSE.zh-CN.md" \
+  "$STEAM_TEST_ROOT/WORKSHOP_DESCRIPTION.md"
 cp -R "$PACKAGE_ROOT/1.6" "$STEAM_TEST_ROOT/1.6"
 cp -R "$PACKAGE_ROOT/About" "$STEAM_TEST_ROOT/About"
 cp -R "$PACKAGE_ROOT/Languages" "$STEAM_TEST_ROOT/Languages"
@@ -45,12 +48,13 @@ cp -R "$PACKAGE_ROOT/Sounds" "$STEAM_TEST_ROOT/Sounds"
 cp -R "$PACKAGE_ROOT/Textures" "$STEAM_TEST_ROOT/Textures"
 cp "$PACKAGE_ROOT/LICENSE" "$STEAM_TEST_ROOT/LICENSE"
 cp "$PACKAGE_ROOT/LICENSE.zh-CN.md" "$STEAM_TEST_ROOT/LICENSE.zh-CN.md"
+cp "$PACKAGE_ROOT/WORKSHOP_DESCRIPTION.md" "$STEAM_TEST_ROOT/WORKSHOP_DESCRIPTION.md"
 
 rm -f "$ZIP_PATH"
 if command -v zip >/dev/null 2>&1; then
   (
     cd "$ROOT_DIR/artifacts/release"
-    zip -rq "AntiAirWeapon.zip" "AntiAirWeapon"
+    zip -rq "AntiAirWeaponForked.zip" "AntiAirWeaponForked"
   )
 else
   echo "zip command not found. Release folder prepared at $PACKAGE_ROOT"

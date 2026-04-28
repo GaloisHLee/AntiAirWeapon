@@ -32,7 +32,7 @@ namespace AntiAirWeapon
             Instance = this;
         }
 
-        public override string ModIdentifier => "AntiAirWeapon";
+        public override string ModIdentifier => "AntiAirWeaponForked";
 
         public static void RegisterTickAction(Action action)
         {

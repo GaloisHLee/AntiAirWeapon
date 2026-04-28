@@ -30,7 +30,7 @@
   <HitADAOnlyOne>You can not have more than 1 TradeShip Destroyer</HitADAOnlyOne>
   <MustPlaceOnHugeADA>Must place on Huge ADA!</MustPlaceOnHugeADA>
 
-  <AntiAirWeapon_SettingsTitle>Anti-Air Weapon</AntiAirWeapon_SettingsTitle>
+  <AntiAirWeapon_SettingsTitle>AntiAirWeapon[forked]</AntiAirWeapon_SettingsTitle>
   <AntiAirWeapon_ResetToDefaults>Reset to defaults</AntiAirWeapon_ResetToDefaults>
   <AntiAirWeapon_SkyfallerList>Skyfallers that can be shot down (Advance turret):</AntiAirWeapon_SkyfallerList>
   <AntiAirWeapon_Add>Add...</AntiAirWeapon_Add>

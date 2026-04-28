@@ -1,6 +1,6 @@
 # AntiAirWeapon
 
-`AntiAirWeapon` 是一个面向 RimWorld 的防空炮模组源码仓库，核心目标是让地图上的防空设施能够识别并拦截空中目标，例如高空炮弹、飞行舱与部分 `Skyfaller` 类目标。
+`AntiAirWeapon[forked]` 是 `Anti-Air Weapon` 的 RimWorld 1.6 fork，原作者为 AKreedz，本 fork 维护者为 Cred Mao。核心目标是让地图上的防空设施能够识别并拦截空中目标，例如高空炮弹、飞行舱与部分 `Skyfaller` 类目标。
 
 本仓库当前主要包含核心 C# 逻辑代码，适合阅读、二次开发、移植与兼容性调整。
 
@@ -83,13 +83,25 @@
 - Harmony 2 / HugsLib 1.6 构建引用整理。
 - 目标选择器 UI、候选缓存、缺失项保留与最近检测到目标记录。
 
+## Fork 发布信息
+
+- Steam 展示名：`AntiAirWeapon[forked]`
+- RimWorld `packageId`：`credmao.antiairweapon.forked`
+- 原项目：`https://github.com/AKreedz/AntiAirWeapon`
+- 许可证：MIT，保留原作者 AKreedz 版权声明。
+- 本 fork 与原包 `AKreedz.AntiAirWeapon` 标记为不兼容，玩家不应同时启用两者。
+- 新发布到 Steam 创意工坊前不要携带旧 `PublishedFileId.txt`；首次上传成功后再保留 Steam 生成的新文件。
+
 ## 本地编译
 
 当前仓库已经补充了本地工程文件与构建脚本：
 
 - `AntiAirWeapon.sln`
 - `AntiAirWeapon.csproj`
-- `build-local.sh`
+- `scripts/build-local.ps1`
+- `scripts/package-release.ps1`
+- `scripts/build-local.sh`
+- `scripts/package-release.sh`
 
 编译前需要准备以下引用：
 
@@ -108,14 +120,26 @@ RimWorld 1.6 构建会优先使用本地 Steam/Workshop 中的 1.6 依赖路径�
 
 准备完成后，可直接运行：
 
+```powershell
+.\scripts\build-local.ps1
+```
+
+macOS / bash 环境可运行：
+
 ```bash
-./build-local.sh
+./scripts/build-local.sh
 ```
 
 若需要 `Release` 配置，可运行：
 
+```powershell
+.\scripts\build-local.ps1 -Configuration Release
+```
+
+macOS / bash 环境：
+
 ```bash
-./build-local.sh Release
+./scripts/build-local.sh Release
 ```
 
 默认输出目录为 `dist/Assemblies/`。
@@ -126,24 +150,31 @@ RimWorld 1.6 构建会优先使用本地 Steam/Workshop 中的 1.6 依赖路径�
 
 - `About/About.xml`
 - `1.6/Defs/`
-- `package-release.sh`
+- `scripts/package-release.ps1`
+- `scripts/package-release.sh`
 
 在引用齐全并能够成功编译后，执行：
 
+```powershell
+.\scripts\package-release.ps1
+```
+
+macOS / bash 环境可执行：
+
 ```bash
-./package-release.sh
+./scripts/package-release.sh
 ```
 
 脚本会自动：
 
 - 以 `Release` 配置编译 DLL
-- 生成 `artifacts/release/AntiAirWeapon/`
+- 生成 `artifacts/release/AntiAirWeaponForked/`
 - 复制 `About`、`Languages`、`Sounds`、`Textures`
 - 将 `1.6/Defs` 与新编译的 `1.6/Assemblies/AntiAirWeapon.dll` 一起打包
-- 尝试额外生成 `artifacts/release/AntiAirWeapon.zip`
-- 同步刷新 `2802147499/`，这个目录可以直接复制到 RimWorld/Steam 的本地模组目录进行游戏内测试
+- 尝试额外生成 `artifacts/release/AntiAirWeaponForked.zip`
+- 同步刷新 `AntiAirWeaponForked/`，这个目录可以直接复制到 RimWorld/Steam 的本地模组目录进行游戏内测试和 Workshop 上传
 
-注意：仓库根目录的 `2802147499.zip` 是原始 Workshop 包，用来恢复资源；当前修改版的 zip 产物是 `artifacts/release/AntiAirWeapon.zip`。
+注意：仓库根目录的 `2802147499.zip` 是原始 Workshop 包，用来恢复资源；当前 fork 修改版的 zip 产物是 `artifacts/release/AntiAirWeaponForked.zip`。
 
 ## 许可证
 
