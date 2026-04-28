@@ -12,6 +12,7 @@ find_rimworld_managed() {
   fi
 
   local candidates=(
+    "F:/SteamLibrary/steamapps/common/RimWorld/RimWorldWin64_Data/Managed"
     "$HOME/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Contents/Resources/Data/Managed"
     "$ROOT_DIR/References/RimWorld/Managed"
   )
@@ -34,13 +35,39 @@ find_hugslib_dir() {
   fi
 
   local candidates=(
+    "F:/SteamLibrary/steamapps/workshop/content/294100/818773962/v1.6/Assemblies"
+    "$HOME/Library/Application Support/Steam/steamapps/workshop/content/294100/818773962/v1.6/Assemblies"
     "$HOME/Library/Application Support/Steam/steamapps/workshop/content/294100/818773962/Assemblies"
     "$ROOT_DIR/References/HugsLib"
   )
 
   local dir
   for dir in "${candidates[@]}"; do
-    if [[ -d "$dir" && -f "$dir/HugsLib.dll" && -f "$dir/0Harmony.dll" ]]; then
+    if [[ -d "$dir" && -f "$dir/HugsLib.dll" ]]; then
+      printf '%s\n' "$dir"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+find_harmony_dir() {
+  if [[ -n "${HARMONY_DIR:-}" && -d "${HARMONY_DIR}" ]]; then
+    printf '%s\n' "${HARMONY_DIR}"
+    return 0
+  fi
+
+  local candidates=(
+    "F:/SteamLibrary/steamapps/workshop/content/294100/2009463077/Current/Assemblies"
+    "$HOME/Library/Application Support/Steam/steamapps/workshop/content/294100/2009463077/Current/Assemblies"
+    "$HOME/Library/Application Support/Steam/steamapps/workshop/content/294100/2009463077/1.6/Assemblies"
+    "$ROOT_DIR/References/Harmony"
+  )
+
+  local dir
+  for dir in "${candidates[@]}"; do
+    if [[ -d "$dir" && -f "$dir/0Harmony.dll" ]]; then
       printf '%s\n' "$dir"
       return 0
     fi
@@ -97,6 +124,7 @@ find_netstandard_facade() {
 
 RIMWORLD_MANAGED="$(find_rimworld_managed || true)"
 HUGSLIB_DIR="$(find_hugslib_dir || true)"
+HARMONY_DIR="$(find_harmony_dir || true)"
 BUILD_TOOL="$(find_build_tool || true)"
 NETSTANDARD_FACADE="$(find_netstandard_facade || true)"
 
@@ -111,7 +139,12 @@ if [[ -z "$RIMWORLD_MANAGED" ]]; then
 fi
 
 if [[ -z "$HUGSLIB_DIR" ]]; then
-  echo "Missing HugsLib assemblies. Set HUGSLIB_DIR or copy HugsLib.dll and 0Harmony.dll into References/HugsLib."
+  echo "Missing HugsLib assemblies. Set HUGSLIB_DIR or copy HugsLib.dll into References/HugsLib."
+  exit 1
+fi
+
+if [[ -z "$HARMONY_DIR" ]]; then
+  echo "Missing Harmony assemblies. Set HARMONY_DIR or copy 0Harmony.dll from the Harmony mod into References/Harmony."
   exit 1
 fi
 
@@ -123,11 +156,12 @@ fi
 echo "Using build tool: $BUILD_TOOL"
 echo "Using RimWorld assemblies: $RIMWORLD_MANAGED"
 echo "Using HugsLib assemblies: $HUGSLIB_DIR"
+echo "Using Harmony assemblies: $HARMONY_DIR"
 echo "Using netstandard facade: $NETSTANDARD_FACADE"
 
 "$BUILD_TOOL" "$PROJECT_FILE" \
   /p:Configuration="$CONFIGURATION" \
   /p:RimWorldManagedDir="$RIMWORLD_MANAGED" \
   /p:HugsLibDir="$HUGSLIB_DIR" \
-  /p:HarmonyDir="$HUGSLIB_DIR" \
+  /p:HarmonyDir="$HARMONY_DIR" \
   /p:NetStandardFacade="$NETSTANDARD_FACADE"

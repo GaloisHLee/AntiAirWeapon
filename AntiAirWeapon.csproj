@@ -35,9 +35,13 @@
   <PropertyGroup>
     <RimWorldManagedDir Condition="'$(RimWorldManagedDir)' == '' and Exists('$(HOME)/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Contents/Resources/Data/Managed')">$(HOME)/Library/Application Support/Steam/steamapps/common/RimWorld/RimWorldMac.app/Contents/Resources/Data/Managed</RimWorldManagedDir>
     <RimWorldManagedDir Condition="'$(RimWorldManagedDir)' == '' and Exists('$(MSBuildThisFileDirectory)References/RimWorld/Managed')">$(MSBuildThisFileDirectory)References/RimWorld/Managed</RimWorldManagedDir>
-    <HugsLibDir Condition="'$(HugsLibDir)' == '' and Exists('$(HOME)/Library/Application Support/Steam/steamapps/workshop/content/294100/818773962/Assemblies')">$(HOME)/Library/Application Support/Steam/steamapps/workshop/content/294100/818773962/Assemblies</HugsLibDir>
+    <HugsLibDir Condition="'$(HugsLibDir)' == '' and Exists('F:/SteamLibrary/steamapps/workshop/content/294100/818773962/v1.6/Assemblies')">F:/SteamLibrary/steamapps/workshop/content/294100/818773962/v1.6/Assemblies</HugsLibDir>
+    <HugsLibDir Condition="'$(HugsLibDir)' == '' and Exists('$(HOME)/Library/Application Support/Steam/steamapps/workshop/content/294100/818773962/v1.6/Assemblies')">$(HOME)/Library/Application Support/Steam/steamapps/workshop/content/294100/818773962/v1.6/Assemblies</HugsLibDir>
     <HugsLibDir Condition="'$(HugsLibDir)' == '' and Exists('$(MSBuildThisFileDirectory)References/HugsLib')">$(MSBuildThisFileDirectory)References/HugsLib</HugsLibDir>
-    <HarmonyDir Condition="'$(HarmonyDir)' == '' and Exists('$(HugsLibDir)')">$(HugsLibDir)</HarmonyDir>
+    <HugsLibDir Condition="'$(HugsLibDir)' == '' and Exists('$(HOME)/Library/Application Support/Steam/steamapps/workshop/content/294100/818773962/Assemblies')">$(HOME)/Library/Application Support/Steam/steamapps/workshop/content/294100/818773962/Assemblies</HugsLibDir>
+    <HarmonyDir Condition="'$(HarmonyDir)' == '' and Exists('F:/SteamLibrary/steamapps/workshop/content/294100/2009463077/Current/Assemblies')">F:/SteamLibrary/steamapps/workshop/content/294100/2009463077/Current/Assemblies</HarmonyDir>
+    <HarmonyDir Condition="'$(HarmonyDir)' == '' and Exists('$(HOME)/Library/Application Support/Steam/steamapps/workshop/content/294100/2009463077/Current/Assemblies')">$(HOME)/Library/Application Support/Steam/steamapps/workshop/content/294100/2009463077/Current/Assemblies</HarmonyDir>
+    <HarmonyDir Condition="'$(HarmonyDir)' == '' and Exists('$(MSBuildThisFileDirectory)References/Harmony')">$(MSBuildThisFileDirectory)References/Harmony</HarmonyDir>
     <NetStandardFacade Condition="'$(NetStandardFacade)' == '' and Exists('$(TargetFrameworkDirectory)/Facades/netstandard.dll')">$(TargetFrameworkDirectory)/Facades/netstandard.dll</NetStandardFacade>
   </PropertyGroup>
 
@@ -61,6 +65,14 @@
       <HintPath>$(RimWorldManagedDir)/UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule" Condition="Exists('$(RimWorldManagedDir)/UnityEngine.IMGUIModule.dll')">
+      <HintPath>$(RimWorldManagedDir)/UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule" Condition="Exists('$(RimWorldManagedDir)/UnityEngine.TextRenderingModule.dll')">
+      <HintPath>$(RimWorldManagedDir)/UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(HarmonyDir)/0Harmony.dll</HintPath>
       <Private>false</Private>
@@ -75,6 +87,11 @@
     <Compile Include="AllMapProjectileStorage.cs" />
     <Compile Include="AntiAirWeaponModBase.cs" />
     <Compile Include="HarmonyHere.cs" />
+    <Compile Include="Settings/Dialog_InterceptTargetSelector.cs" />
+    <Compile Include="Settings/InterceptCandidate.cs" />
+    <Compile Include="Settings/InterceptRuleGroup.cs" />
+    <Compile Include="Settings/InterceptTargetRegistry.cs" />
+    <Compile Include="Settings/ObservedAirTarget.cs" />
     <Compile Include="Buildings/Building_AirDefense.cs" />
     <Compile Include="Buildings/CompProperties_TurretTopSize.cs" />
     <Compile Include="Buildings/CompTurretTopSize.cs" />

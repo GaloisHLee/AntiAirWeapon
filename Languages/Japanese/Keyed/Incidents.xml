@@ -1,33 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
 
-  <AirDefenseHit>目標に命中！</AirDefenseHit>
-  <Beshotdown>対空砲で撃たれた！</Beshotdown>
-  <BeshotdownMsg>ああ、なんてことだ！少なくとも1人以上の入植者が、{0}の対空砲によって撃墜されました：</BeshotdownMsg>
-  <restoreBullet>弾薬を補充</restoreBullet>
-  <restoreProgress>作業</restoreProgress>
-  <ADAUnderRoof>エラー：屋根の下です！</ADAUnderRoof>
-  <atkTicks>装填時間</atkTicks>
-  <ra2Sec>秒</ra2Sec>
+  <AntiAirWeaponHitText>Hit Target!</AntiAirWeaponHitText>
+  <Beshotdown>Be shot down!</Beshotdown>
+  <BeshotdownMsg>Oh no! One or more of our colonists were shot down by {0}'s anti-air gun:</BeshotdownMsg>
+  <AntiAirWeaponKillCount>Kill Count</AntiAirWeaponKillCount>
+  <AntiAirWeaponRestoreBullet>Restore Bullet</AntiAirWeaponRestoreBullet>
+  <AntiAirWeaponRestoreProgress>Progress</AntiAirWeaponRestoreProgress>
+  <AntiAirWeaponUnderRoof>Error: Under Roof!</AntiAirWeaponUnderRoof>
+  <AntiAirWeaponAtkSecondLabel>Cooldown</AntiAirWeaponAtkSecondLabel>
+  <AntiAirWeaponAtkSecond> s</AntiAirWeaponAtkSecond>
+  <ADADroppodCargoDropPercentage>Droppod Cargo Drop Percentage</ADADroppodCargoDropPercentage>
+  <ADADroppodCargoDropPercentageDesc>How many goods will drop out when a droppod or a trade ship is shot down?(0 = None, 100 = All)</ADADroppodCargoDropPercentageDesc>
 
-  <ADADroppodCargoDropPercentage>撃墜ポッドの回収率</ADADroppodCargoDropPercentage>
-  <ADADroppodCargoDropPercentageDesc>輸送ポッドが撃墜された時に、どの程度積まれていたアイテムを回収できるかの確率(％)です。\n（0=なし、100=全て回収）</ADADroppodCargoDropPercentageDesc>
+  <ADA_Hit>Shot down </ADA_Hit>
+  <ADA_NoManner>No Manning Pawn</ADA_NoManner>
+  <ADA_NoShip>No Passing Ship</ADA_NoShip>
+  <PassingShipShotDown>Shot down a trade ship!</PassingShipShotDown>
+  <PassingShipShotDownMsg>{0} was shot down! The cargo will drop.</PassingShipShotDownMsg>
+  <ADA_Hit_NoTarget>No Target Selected</ADA_Hit_NoTarget>
+  <ADA_Hit_Target>Target</ADA_Hit_Target>
+  <ADA_Fiya>Fire!</ADA_Fiya>
+  <ADA_StopFiya>Stop Fire</ADA_StopFiya>
+  <FireProgress>Fire Progress</FireProgress>
+  <ADAHITWaitCoolDown>Wait until cooldown</ADAHITWaitCoolDown>
+  <ADAHITNeedAmmo>Need TradeShip Destroyer Shell!</ADAHITNeedAmmo>
+  <ADAHITCANTStop>You can not stop fire now!</ADAHITCANTStop>
+  <ReasonHitTradeShip>Shot down a trade ship</ReasonHitTradeShip>
+  <HitADAOnlyOne>You can not have more than 1 TradeShip Destroyer</HitADAOnlyOne>
+  <MustPlaceOnHugeADA>Must place on Huge ADA!</MustPlaceOnHugeADA>
 
-  <ADA_Hit>撃ち落とす</ADA_Hit>
-  <ADA_NoManner>誰も配置されていません</ADA_NoManner>
-  <ADA_NoShip>衛星軌道に宇宙船が居ません</ADA_NoShip>
-  <PassingShipShotDown>トレードシップを撃墜した！</PassingShipShotDown>
-  <PassingShipShotDownMsg>{0}は撃墜された！貨物が落ちてくるでしょう</PassingShipShotDownMsg>
-  <ADA_Hit_NoTarget>目標が未選択です</ADA_Hit_NoTarget>
-  <ADA_Hit_Target>目標</ADA_Hit_Target>
-  <ADA_Fiya>発射！</ADA_Fiya>
-  <ADA_StopFiya>発射中止</ADA_StopFiya>
-  <FireProgress>発射準備中</FireProgress>
-  <ADAHITWaitCoolDown>クールダウン消化まで待機</ADAHITWaitCoolDown>
-  <ADAHITNeedAmmo>衛星破壊砲弾が必要です！！</ADAHITNeedAmmo>
-  <ADAHITCANTStop>もう発射を中止できません</ADAHITCANTStop>
-  <ReasonHitTradeShip>トレードシップを撃墜した</ReasonHitTradeShip>
-  <HitADAOnlyOne>同時に2つ以上の衛星破壊砲を持つことはできません</HitADAOnlyOne>
-  <MustPlaceOnHugeADA>衛星破壊砲に装填が必要</MustPlaceOnHugeADA>
+  <AntiAirWeapon_SettingsTitle>Anti-Air Weapon</AntiAirWeapon_SettingsTitle>
+  <AntiAirWeapon_ResetToDefaults>Reset to defaults</AntiAirWeapon_ResetToDefaults>
+  <AntiAirWeapon_SkyfallerList>Skyfallers that can be shot down (Advance turret):</AntiAirWeapon_SkyfallerList>
+  <AntiAirWeapon_Add>Add...</AntiAirWeapon_Add>
+  <AntiAirWeapon_DefNotFound>(def not found)</AntiAirWeapon_DefNotFound>
+  <AntiAirWeapon_NoMoreToAdd>No more Skyfallers to add</AntiAirWeapon_NoMoreToAdd>
 
 </LanguageData>

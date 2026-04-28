@@ -3,37 +3,38 @@
 
   <AntiAirWeaponHitText>击中目标!</AntiAirWeaponHitText>
   <Beshotdown>被击落!</Beshotdown>
-  <BeshotdownMsg>哦,我的上帝啊!一个或多个我们的殖民者被 {0}的防空设施击落:</BeshotdownMsg>
+  <BeshotdownMsg>糟糕! 我们的一个或多个殖民者被 {0} 的防空设施击落:</BeshotdownMsg>
   <AntiAirWeaponKillCount>击杀数</AntiAirWeaponKillCount>
   <AntiAirWeaponRestoreBullet>储存弹药</AntiAirWeaponRestoreBullet>
   <AntiAirWeaponRestoreProgress>储存进度</AntiAirWeaponRestoreProgress>
-  <AntiAirWeaponUnderRoof>错误:位于屋顶之下!</AntiAirWeaponUnderRoof>
+  <AntiAirWeaponUnderRoof>错误: 位于屋顶之下!</AntiAirWeaponUnderRoof>
   <AntiAirWeaponAtkSecondLabel>冷却</AntiAirWeaponAtkSecondLabel>
   <AntiAirWeaponAtkSecond> 秒</AntiAirWeaponAtkSecond>
-  <ADADroppodCargoDropPercentage>掉落百分比</ADADroppodCargoDropPercentage>
-  <ADADroppodCargoDropPercentageDesc>当空投仓或货船被击毁时，多少货物会掉落?(0 = 无,100 = 所有)</ADADroppodCargoDropPercentageDesc>
-  
+  <ADADroppodCargoDropPercentage>空投货物掉落百分比</ADADroppodCargoDropPercentage>
+  <ADADroppodCargoDropPercentageDesc>空投舱或贸易船被击落时，有多少货物会掉落?(0 = 无, 100 = 全部)</ADADroppodCargoDropPercentageDesc>
+
   <ADA_Hit>击落 </ADA_Hit>
-  <ADA_NoManner>无操作人员</ADA_NoManner>
-  <ADA_NoShip>无经过货船</ADA_NoShip>
-  <PassingShipShotDown>击落货船!</PassingShipShotDown>
-  <PassingShipShotDownMsg>{0} 被击落了!它的货物掉落在了这里</PassingShipShotDownMsg>
+  <ADA_NoManner>无人操作</ADA_NoManner>
+  <ADA_NoShip>没有经过的飞船</ADA_NoShip>
+  <PassingShipShotDown>击落贸易船!</PassingShipShotDown>
+  <PassingShipShotDownMsg>{0} 被击落了! 货物将会掉落。</PassingShipShotDownMsg>
   <ADA_Hit_NoTarget>没有选定目标</ADA_Hit_NoTarget>
   <ADA_Hit_Target>目标</ADA_Hit_Target>
   <ADA_Fiya>开火!</ADA_Fiya>
   <ADA_StopFiya>停火</ADA_StopFiya>
-  <FireProgress>充能进度</FireProgress>
+  <FireProgress>开火进度</FireProgress>
   <ADAHITWaitCoolDown>请等待冷却结束</ADAHITWaitCoolDown>
-  <ADAHITNeedAmmo>需要货船毁灭者弹药!</ADAHITNeedAmmo>
+  <ADAHITNeedAmmo>需要贸易船毁灭者弹药!</ADAHITNeedAmmo>
   <ADAHITCANTStop>现在无法停火!</ADAHITCANTStop>
-  <ReasonHitTradeShip>击落货船</ReasonHitTradeShip>
-  <HitADAOnlyOne>你不能建造超过一个货船毁灭者</HitADAOnlyOne>
+  <ReasonHitTradeShip>击落贸易船</ReasonHitTradeShip>
+  <HitADAOnlyOne>你不能拥有超过 1 个贸易船毁灭者</HitADAOnlyOne>
   <MustPlaceOnHugeADA>必须放置在巨型防空炮上!</MustPlaceOnHugeADA>
 
-  <AntiAirWeapon_SettingsTitle>防空炮</AntiAirWeapon_SettingsTitle>
-  <AntiAirWeapon_ResetToDefaults>重置为默认</AntiAirWeapon_ResetToDefaults>
-  <AntiAirWeapon_SkyfallerList>可击落的空投物 (先进防空炮):</AntiAirWeapon_SkyfallerList>
+  <AntiAirWeapon_SettingsTitle>防空武器</AntiAirWeapon_SettingsTitle>
+  <AntiAirWeapon_ResetToDefaults>重置为默认值</AntiAirWeapon_ResetToDefaults>
+  <AntiAirWeapon_SkyfallerList>可击落的空投目标(高级炮塔):</AntiAirWeapon_SkyfallerList>
   <AntiAirWeapon_Add>添加...</AntiAirWeapon_Add>
-  <AntiAirWeapon_DefNotFound>(定义未找到)</AntiAirWeapon_DefNotFound>
-  <AntiAirWeapon_NoMoreToAdd>没有更多可添加的空投物</AntiAirWeapon_NoMoreToAdd>
+  <AntiAirWeapon_DefNotFound>(未找到定义)</AntiAirWeapon_DefNotFound>
+  <AntiAirWeapon_NoMoreToAdd>没有更多可添加的空投目标</AntiAirWeapon_NoMoreToAdd>
+
 </LanguageData>

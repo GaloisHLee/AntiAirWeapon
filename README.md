@@ -9,7 +9,8 @@
 - 通过 Harmony 监听飞行物生成，将高空炮弹与飞行舱类目标纳入全局缓存。
 - 防空炮按射程、供电、冷却、燃料与屋顶状态决定是否开火。
 - 默认仅拦截敌对飞行舱与敌对炮弹，避免误击中立贸易货仓。
-- 支持按 `defName` 自定义拦截策略，方便兼容其他模组的特殊飞行物。
+- 支持通过设置页目标选择器管理 `defName` 规则，兼容其他模组的特殊飞行物。
+- 记录最近检测到的空中目标，方便在大型 mod 列表中快速定位需要配置的对象。
 
 ## 当前拦截策略
 
@@ -32,7 +33,16 @@
 - `总是拦截 defName`
 - `按敌对关系拦截 defName`
 
-其中三个 `defName` 列表支持用逗号、分号或换行分隔，适合为其他模组追加兼容规则。
+三个 `defName` 列表仍然作为真实存储格式保留，旧配置可以继续读取。设置页现在默认显示摘要行，并通过 `管理...` 按钮打开目标选择器，不需要玩家手动记忆或输入大段 `defName`。
+
+目标选择器支持：
+
+- 搜索目标名称、`defName`、来源 mod、目标类型。
+- 按 `全部`、`炮弹`、`飞行舱/Skyfaller`、`最近检测到`、`已选择`、`缺失项` 筛选。
+- 每页最多显示前 200 条候选，候选过多时提示继续搜索缩小范围，避免大型 mod 列表下明显卡顿。
+- 在三组规则之间移动目标时自动互斥：加入当前列表会从另外两个列表移除。
+- 未安装 mod 产生的旧 `defName` 会作为 `缺失项` 保留并显示，不会被自动删除。
+- 设置页的 `高级` 区域可展开原始文本编辑，支持逗号、分号、换行、中文逗号、中文分号分隔。
 
 推荐用法：
 
@@ -48,9 +58,10 @@
 - [Sounds](Sounds): 模组音效资源
 - [Textures](Textures): 贴图资源
 - [Buildings](Buildings): 防空炮主体与炮塔顶部相关源码
+- [Settings](Settings): 目标选择器、候选扫描、规则管理与最近检测到目标的设置 UI
 - [AntiAirWeaponModBase.cs](AntiAirWeaponModBase.cs): HugsLib 入口、设置注册与全局配置缓存
 - [HarmonyHere.cs](HarmonyHere.cs): Harmony 补丁与飞行物收集入口
-- [AllMapProjectileStorage.cs](AllMapProjectileStorage.cs): 全地图飞行物缓存
+- [AllMapProjectileStorage.cs](AllMapProjectileStorage.cs): 全地图飞行物缓存与最近检测到目标持久化
 
 ## 开发说明
 
@@ -59,6 +70,18 @@
 - 版本相关内容当前使用 `1.6/Defs` 与构建出的 `1.6/Assemblies`。
 - 本地编译依赖与中间产物使用 `.gitignore` 排除，包括 `References/`、`dist/`、`obj/`、`artifacts/`。
 - 如需扩展兼容性，优先从 `Building_AirDefense` 中的目标识别与策略判断逻辑入手。
+- 目标选择器的候选列表由缓存服务生成，UI 不应在每帧重扫 `DefDatabase`。
+- HugsLib 设置 UI 只使用已在 RimWorld 1.6 环境校验过的成员：`SettingHandle.CustomDrawer`、`CustomDrawerHeight`、`SettingHandle<T>.Value`、`StringValue`。
+- 为保持 1.6 构建兼容，不使用 `CustomDrawerFullWidth`、`ForceSaveChanges` 等跨引用版本不稳定的 API。
+- Harmony 使用 Harmony 2，不再回退到 Harmony 1 的 `HarmonyInstance` API。
+
+## 开发日志
+
+阶段性修复与实现记录见 [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md)，当前包含：
+
+- RimWorld 1.6 启动黑屏、mod 列表重置与 XML 编码问题修复。
+- Harmony 2 / HugsLib 1.6 构建引用整理。
+- 目标选择器 UI、候选缓存、缺失项保留与最近检测到目标记录。
 
 ## 本地编译
 
@@ -74,9 +97,14 @@
   - `Assembly-CSharp.dll`
   - `UnityEngine.dll`
   - `UnityEngine.CoreModule.dll`
+  - `UnityEngine.IMGUIModule.dll`
+  - `UnityEngine.TextRenderingModule.dll`
 - `References/HugsLib/`
   - `HugsLib.dll`
+- `References/Harmony/`
   - `0Harmony.dll`
+
+RimWorld 1.6 构建会优先使用本地 Steam/Workshop 中的 1.6 依赖路径；如果没有对应路径，再使用 `References/` 下的手动引用。HugsLib 建议使用 Workshop `818773962/v1.6/Assemblies/HugsLib.dll`，避免误引用其他游戏版本的 DLL。
 
 准备完成后，可直接运行：
 

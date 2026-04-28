@@ -1,5 +1,5 @@
 ﻿using AntiAirWeapon.Buildings;
-using Harmony;
+using HarmonyLib;
 using RimWorld;
 using RimWorld.BaseGen;
 using System;
@@ -19,7 +19,7 @@ namespace AntiAirWeapon
         static HarmonyStartUp()
         {
 
-            HarmonyInstance.Create("akreedz.rimworld.antiairweapon").PatchAll(Assembly.GetExecutingAssembly());
+            new Harmony("akreedz.rimworld.antiairweapon").PatchAll(Assembly.GetExecutingAssembly());
             Log.Message("AntiAirWeapon Harmony Add");
         }
     }
