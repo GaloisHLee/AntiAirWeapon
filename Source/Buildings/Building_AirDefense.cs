@@ -180,9 +180,10 @@ namespace AntiAirWeapon.Buildings
 					//寻找可以打击的对象
 					bool canShotProjectile = this.topSizeComp.Props.canShotProjectile;
 					bool canShotPod = this.topSizeComp.Props.canShotPod;
-					AllMapProjectileStorage aps = AntiAirWeaponModBase.Instance._AllMapProjectileStorage;
+					AntiAirWeaponMod mod = AntiAirWeaponMod.Instance;
+					AllMapProjectileStorage aps = mod != null ? mod._AllMapProjectileStorage : null;
 						Thing atkTarget = null;
-						List<Thing> atkList = aps.mapAndThings;//.TryGetValue(this.Map.Index );
+						List<Thing> atkList = aps != null ? aps.mapAndThings : null;//.TryGetValue(this.Map.Index );
 						if (atkList != null)
 						{
 							//Log.Message("正在寻找目标！"+canShotProjectile+"/"+canShotPod);
@@ -268,7 +269,7 @@ namespace AntiAirWeapon.Buildings
 		private bool shouldInterceptTarget(Thing target, bool canShotProjectile, bool canShotPod, out string reason)
 		{
 			reason = string.Empty;
-			AntiAirWeaponModBase mod = AntiAirWeaponModBase.Instance;
+			AntiAirWeaponMod mod = AntiAirWeaponMod.Instance;
 			if (target == null || mod == null)
 			{
 				reason = "无效目标|";

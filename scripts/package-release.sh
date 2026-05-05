@@ -8,7 +8,7 @@ ASSEMBLY_SOURCE="$ROOT_DIR/dist/Assemblies/AntiAirWeapon.dll"
 PDB_SOURCE="$ROOT_DIR/dist/Assemblies/AntiAirWeapon.pdb"
 VERSIONED_ROOT="$PACKAGE_ROOT/1.6"
 ZIP_PATH="$ROOT_DIR/artifacts/release/AntiAirWeaponForked.zip"
-STEAM_TEST_ROOT="$ROOT_DIR/AntiAirWeaponForked"
+STEAM_TEST_ROOT="$ROOT_DIR/3715925883"
 
 "$SCRIPT_DIR/build-local.sh" Release
 

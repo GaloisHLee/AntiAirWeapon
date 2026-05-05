@@ -4,9 +4,17 @@
 
 本仓库当前主要包含核心 C# 逻辑代码，适合阅读、二次开发、移植与兼容性调整。
 
+## 当前状态
+
+- 目标运行版本：RimWorld 1.6。
+- 运行时前置：Harmony。
+- HugsLib 已从代码、构建引用、模组元数据和发布说明中移除。
+- 最小测试列表 `Harmony + Core/DLC + AntiAirWeapon[forked]` 已验证启动成功，日志显示 `Harmony patches applied: 3`。
+
 ## 功能概览
 
 - 通过 Harmony 监听飞行物生成，将高空炮弹与飞行舱类目标纳入全局缓存。
+- 使用 RimWorld 原生 `ModSettings` 设置页，不再需要 HugsLib 前置。
 - 防空炮按射程、供电、冷却、燃料与屋顶状态决定是否开火。
 - 默认仅拦截敌对飞行舱与敌对炮弹，避免误击中立贸易货仓。
 - 支持通过设置页目标选择器管理 `defName` 规则，兼容其他模组的特殊飞行物。
@@ -52,16 +60,29 @@
 
 ## 仓库结构
 
-- [About](About): 模组元数据、预览图与 Workshop 发布编号
-- [1.6](1.6): 当前 RimWorld 1.6 使用的 `Defs` 与编译产物目录
+- [About](About): 模组元数据与预览图
+- [1.6](1.6): 当前 RimWorld 1.6 使用的 `Defs`
 - [Languages](Languages): 多语言文本资源
 - [Sounds](Sounds): 模组音效资源
 - [Textures](Textures): 贴图资源
-- [Buildings](Buildings): 防空炮主体与炮塔顶部相关源码
-- [Settings](Settings): 目标选择器、候选扫描、规则管理与最近检测到目标的设置 UI
-- [AntiAirWeaponModBase.cs](AntiAirWeaponModBase.cs): HugsLib 入口、设置注册与全局配置缓存
-- [HarmonyHere.cs](HarmonyHere.cs): Harmony 补丁与飞行物收集入口
-- [AllMapProjectileStorage.cs](AllMapProjectileStorage.cs): 全地图飞行物缓存与最近检测到目标持久化
+- [Source](Source): C# 源码根目录
+- [Source/Buildings](Source/Buildings): 防空炮主体与炮塔顶部相关源码
+- [Source/Settings](Source/Settings): 目标选择器、候选扫描、规则管理与最近检测到目标的设置 UI
+- [Source/AntiAirWeaponMod.cs](Source/AntiAirWeaponMod.cs): 原生 RimWorld `Mod` 入口、设置注册与全局配置缓存
+- [Source/HarmonyHere.cs](Source/HarmonyHere.cs): Harmony 补丁与飞行物收集入口
+- [Source/AllMapProjectileStorage.cs](Source/AllMapProjectileStorage.cs): 全地图飞行物缓存与最近检测到目标持久化
+
+## 目录约定
+
+仓库只保留源码、Defs、资源、文档和构建脚本。以下内容为本地生成或本机配置，已由 `.gitignore` 排除：
+
+- `3715925883/`: 当前 Workshop ID 对应的本地测试/上传目录，由打包脚本刷新。
+- `dist/`、`obj/`、`artifacts/`: 编译与 release 产物，可随时重新生成。
+- `.dotnet-home/`、`.nuget/`: 本地构建缓存。
+- `mod_upload.vdf`: SteamCMD 上传描述文件，包含本机绝对路径。
+- `Player.log` 与其他 `*.log`: 本地运行日志。
+
+旧 Workshop 包目录 `2802147499/` 已移除，不再作为开发或发布来源。
 
 ## 开发说明
 
@@ -71,8 +92,8 @@
 - 本地编译依赖与中间产物使用 `.gitignore` 排除，包括 `References/`、`dist/`、`obj/`、`artifacts/`。
 - 如需扩展兼容性，优先从 `Building_AirDefense` 中的目标识别与策略判断逻辑入手。
 - 目标选择器的候选列表由缓存服务生成，UI 不应在每帧重扫 `DefDatabase`。
-- HugsLib 设置 UI 只使用已在 RimWorld 1.6 环境校验过的成员：`SettingHandle.CustomDrawer`、`CustomDrawerHeight`、`SettingHandle<T>.Value`、`StringValue`。
-- 为保持 1.6 构建兼容，不使用 `CustomDrawerFullWidth`、`ForceSaveChanges` 等跨引用版本不稳定的 API。
+- 设置 UI 使用 RimWorld 原生 `ModSettings`、`DoSettingsWindowContents`、`Widgets` 与 `Listing_Standard`。
+- 为保持 1.6 构建兼容，不再引用 HugsLib 设置 API，也不依赖 HugsLib 的加载生命周期。
 - Harmony 使用 Harmony 2，不再回退到 Harmony 1 的 `HarmonyInstance` API。
 
 ## 开发日志
@@ -80,17 +101,18 @@
 阶段性修复与实现记录见 [DEVELOPMENT_LOG.md](DEVELOPMENT_LOG.md)，当前包含：
 
 - RimWorld 1.6 启动黑屏、mod 列表重置与 XML 编码问题修复。
-- Harmony 2 / HugsLib 1.6 构建引用整理。
+- Harmony 2 构建引用整理与 HugsLib 前置移除。
 - 目标选择器 UI、候选缓存、缺失项保留与最近检测到目标记录。
 
 ## Fork 发布信息
 
 - Steam 展示名：`AntiAirWeapon[forked]`
 - RimWorld `packageId`：`credmao.antiairweapon.forked`
+- 当前 Workshop ID：`3715925883`
 - 原项目：`https://github.com/AKreedz/AntiAirWeapon`
 - 许可证：MIT，保留原作者 AKreedz 版权声明。
 - 本 fork 与原包 `AKreedz.AntiAirWeapon` 标记为不兼容，玩家不应同时启用两者。
-- 新发布到 Steam 创意工坊前不要携带旧 `PublishedFileId.txt`；首次上传成功后再保留 Steam 生成的新文件。
+- Workshop 上传使用根目录本机文件 `mod_upload.vdf`，发布内容目录为 `3715925883/`。
 
 ## 本地编译
 
@@ -111,12 +133,10 @@
   - `UnityEngine.CoreModule.dll`
   - `UnityEngine.IMGUIModule.dll`
   - `UnityEngine.TextRenderingModule.dll`
-- `References/HugsLib/`
-  - `HugsLib.dll`
 - `References/Harmony/`
   - `0Harmony.dll`
 
-RimWorld 1.6 构建会优先使用本地 Steam/Workshop 中的 1.6 依赖路径；如果没有对应路径，再使用 `References/` 下的手动引用。HugsLib 建议使用 Workshop `818773962/v1.6/Assemblies/HugsLib.dll`，避免误引用其他游戏版本的 DLL。
+RimWorld 1.6 构建会优先使用本地 Steam/Workshop 中的 1.6 依赖路径；如果没有对应路径，再使用 `References/` 下的手动引用。运行时只需要 RimWorld 1.6 与 Harmony，不再需要 HugsLib。
 
 准备完成后，可直接运行：
 
@@ -172,9 +192,19 @@ macOS / bash 环境可执行：
 - 复制 `About`、`Languages`、`Sounds`、`Textures`
 - 将 `1.6/Defs` 与新编译的 `1.6/Assemblies/AntiAirWeapon.dll` 一起打包
 - 尝试额外生成 `artifacts/release/AntiAirWeaponForked.zip`
-- 同步刷新 `AntiAirWeaponForked/`，这个目录可以直接复制到 RimWorld/Steam 的本地模组目录进行游戏内测试和 Workshop 上传
+- 同步刷新 `3715925883/`，这个目录对应当前 Workshop ID，可直接用于游戏内测试和 Workshop 上传
 
-注意：仓库根目录的 `2802147499.zip` 是原始 Workshop 包，用来恢复资源；当前 fork 修改版的 zip 产物是 `artifacts/release/AntiAirWeaponForked.zip`。
+当前 fork 修改版的 zip 产物是 `artifacts/release/AntiAirWeaponForked.zip`；SteamCMD 上传优先使用 `3715925883/`。
+
+## SteamCMD 上传
+
+先运行 release 打包脚本，确认 `3715925883/` 已刷新。随后使用 SteamCMD 读取根目录的 `mod_upload.vdf`：
+
+```powershell
+steamcmd +login <steam_user> +workshop_build_item "E:\RImworldModDev\AntiAirWeapon\mod_upload.vdf" +quit
+```
+
+如果 Steam Guard 要求验证码，按 SteamCMD 提示输入即可。
 
 ## 许可证
 

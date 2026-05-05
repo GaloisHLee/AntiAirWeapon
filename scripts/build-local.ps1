@@ -3,7 +3,6 @@ param(
     [string]$Configuration = "Debug",
 
     [string]$RimWorldManagedDir = $env:RIMWORLD_MANAGED_DIR,
-    [string]$HugsLibDir = $env:HUGSLIB_DIR,
     [string]$HarmonyDir = $env:HARMONY_DIR,
     [string]$NetStandardFacade = $env:NETSTANDARD_FACADE,
     [string]$BuildTool = $env:MSBUILD_PATH
@@ -93,15 +92,6 @@ if ([string]::IsNullOrWhiteSpace($RimWorldManagedDir)) {
     ) "Assembly-CSharp.dll"
 }
 
-if ([string]::IsNullOrWhiteSpace($HugsLibDir)) {
-    $HugsLibDir = Find-DirectoryWithFile @(
-        "F:/SteamLibrary/steamapps/workshop/content/294100/818773962/v1.6/Assemblies",
-        "C:/Program Files (x86)/Steam/steamapps/workshop/content/294100/818773962/v1.6/Assemblies",
-        "C:/Program Files/Steam/steamapps/workshop/content/294100/818773962/v1.6/Assemblies",
-        (Join-Path $RootDir "References/HugsLib")
-    ) "HugsLib.dll"
-}
-
 if ([string]::IsNullOrWhiteSpace($HarmonyDir)) {
     $HarmonyDir = Find-DirectoryWithFile @(
         "F:/SteamLibrary/steamapps/workshop/content/294100/2009463077/Current/Assemblies",
@@ -114,6 +104,7 @@ if ([string]::IsNullOrWhiteSpace($HarmonyDir)) {
 
 if ([string]::IsNullOrWhiteSpace($NetStandardFacade)) {
     $NetStandardFacade = Find-File @(
+        (Join-Path $RimWorldManagedDir "netstandard.dll"),
         (Join-Path $RootDir ".dotnet/sdk/*/Microsoft/Microsoft.NET.Build.Extensions/net461/lib/netstandard.dll"),
         "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Microsoft/Microsoft.NET.Build.Extensions/net461/lib/netstandard.dll",
         "C:/Program Files/Microsoft Visual Studio/2022/BuildTools/MSBuild/Microsoft/Microsoft.NET.Build.Extensions/net461/lib/netstandard.dll",
@@ -144,16 +135,12 @@ if ([string]::IsNullOrWhiteSpace($BuildTool)) {
 if ([string]::IsNullOrWhiteSpace($RimWorldManagedDir)) {
     throw "Missing RimWorld managed assemblies. Set RIMWORLD_MANAGED_DIR or copy files into References/RimWorld/Managed."
 }
-if ([string]::IsNullOrWhiteSpace($HugsLibDir)) {
-    throw "Missing HugsLib assemblies. Set HUGSLIB_DIR or copy HugsLib.dll into References/HugsLib."
-}
 if ([string]::IsNullOrWhiteSpace($HarmonyDir)) {
     throw "Missing Harmony assemblies. Set HARMONY_DIR or copy 0Harmony.dll into References/Harmony."
 }
 
 Write-Host "Using build tool: $BuildTool"
 Write-Host "Using RimWorld assemblies: $RimWorldManagedDir"
-Write-Host "Using HugsLib assemblies: $HugsLibDir"
 Write-Host "Using Harmony assemblies: $HarmonyDir"
 if (-not [string]::IsNullOrWhiteSpace($NetStandardFacade)) {
     Write-Host "Using netstandard facade: $NetStandardFacade"
@@ -163,14 +150,12 @@ if ((Split-Path -Leaf $BuildTool) -ieq "dotnet.exe" -or (Split-Path -Leaf $Build
     & $BuildTool msbuild $ProjectFile `
         /p:Configuration=$Configuration `
         /p:RimWorldManagedDir="$RimWorldManagedDir" `
-        /p:HugsLibDir="$HugsLibDir" `
         /p:HarmonyDir="$HarmonyDir" `
         /p:NetStandardFacade="$NetStandardFacade"
 } else {
     & $BuildTool $ProjectFile `
         /p:Configuration=$Configuration `
         /p:RimWorldManagedDir="$RimWorldManagedDir" `
-        /p:HugsLibDir="$HugsLibDir" `
         /p:HarmonyDir="$HarmonyDir" `
         /p:NetStandardFacade="$NetStandardFacade"
 }

@@ -11,7 +11,7 @@ $VersionedRoot = Join-Path $PackageRoot "1.6"
 $AssemblySource = Join-Path $RootDir "dist/Assemblies/AntiAirWeapon.dll"
 $PdbSource = Join-Path $RootDir "dist/Assemblies/AntiAirWeapon.pdb"
 $ZipPath = Join-Path $RootDir "artifacts/release/AntiAirWeaponForked.zip"
-$SteamTestRoot = Join-Path $RootDir "AntiAirWeaponForked"
+$SteamTestRoot = Join-Path $RootDir "3715925883"
 
 & (Join-Path $ScriptDir "build-local.ps1") -Configuration Release
 if ($LASTEXITCODE -ne 0) {

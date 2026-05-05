@@ -11,14 +11,14 @@ namespace AntiAirWeapon.Settings
     {
         private const float RowHeight = 66f;
         private const float HeaderHeight = 116f;
-        private readonly AntiAirWeaponModBase mod;
+        private readonly AntiAirWeaponMod mod;
         private readonly InterceptRuleGroup group;
         private readonly QuickSearchWidget searchWidget = new QuickSearchWidget();
         private readonly List<InterceptCandidate> candidates = new List<InterceptCandidate>();
         private Vector2 scrollPosition;
         private CandidateFilter activeFilter = CandidateFilter.All;
 
-        public Dialog_InterceptTargetSelector(AntiAirWeaponModBase mod, InterceptRuleGroup group)
+        public Dialog_InterceptTargetSelector(AntiAirWeaponMod mod, InterceptRuleGroup group)
         {
             this.mod = mod;
             this.group = group;

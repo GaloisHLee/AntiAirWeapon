@@ -1,6 +1,3 @@
-using HugsLib;
-using HugsLib.Utils;
-using HugsLib.Settings;
 using RimWorld;
 using System;
 using System.Collections.Generic;
@@ -11,96 +8,177 @@ using Verse;
 
 namespace AntiAirWeapon
 {
-    public class AntiAirWeaponModBase : ModBase
+    public class AntiAirWeaponSettings : ModSettings
+    {
+        public bool interceptHostilePods = true;
+        public bool interceptHostileProjectiles = true;
+        public bool interceptUnknownSkyfallers = false;
+        public bool showAdvancedDefNameEditor = false;
+        public string neverInterceptDefs = string.Empty;
+        public string alwaysInterceptDefs = string.Empty;
+        public string interceptHostileDefs = string.Empty;
+
+        public override void ExposeData()
+        {
+            Scribe_Values.Look(ref this.interceptHostilePods, "interceptHostilePods", true);
+            Scribe_Values.Look(ref this.interceptHostileProjectiles, "interceptHostileProjectiles", true);
+            Scribe_Values.Look(ref this.interceptUnknownSkyfallers, "interceptUnknownSkyfallers", false);
+            Scribe_Values.Look(ref this.showAdvancedDefNameEditor, "showAdvancedDefNameEditor", false);
+            Scribe_Values.Look(ref this.neverInterceptDefs, "neverInterceptDefs", string.Empty);
+            Scribe_Values.Look(ref this.alwaysInterceptDefs, "alwaysInterceptDefs", string.Empty);
+            Scribe_Values.Look(ref this.interceptHostileDefs, "interceptHostileDefs", string.Empty);
+            base.ExposeData();
+        }
+    }
+
+    public class AntiAirWeaponMod : Mod
     {
         private static readonly char[] DefNameSeparators = new[] { ',', ';', '\n', '\r', '\t', '，', '；' };
-        private static List<Action> TickActions = new List<Action>();
+        private const float RuleRowHeightCollapsed = 66f;
+        private const float RuleRowHeightExpanded = 96f;
 
-        public static AntiAirWeaponModBase Instance { get; private set; }
+        private static AntiAirWeaponMod instance;
+        private AntiAirWeaponSettings settings;
+        private Vector2 settingsScrollPosition;
+
+        public static AntiAirWeaponMod Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    try
+                    {
+                        instance = LoadedModManager.GetMod<AntiAirWeaponMod>();
+                    }
+                    catch
+                    {
+                        instance = null;
+                    }
+                }
+                return instance;
+            }
+            private set
+            {
+                instance = value;
+            }
+        }
 
         public AllMapProjectileStorage _AllMapProjectileStorage
         {
             get { return Find.World != null ? Find.World.GetComponent<AllMapProjectileStorage>() : null; }
         }
 
-        public bool InterceptHostilePods => this.interceptHostilePods == null || this.interceptHostilePods.Value;
-        public bool InterceptHostileProjectiles => this.interceptHostileProjectiles == null || this.interceptHostileProjectiles.Value;
-        public bool InterceptUnknownSkyfallers => this.interceptUnknownSkyfallers != null && this.interceptUnknownSkyfallers.Value;
+        public bool InterceptHostilePods
+        {
+            get { return this.SettingsData == null || this.SettingsData.interceptHostilePods; }
+        }
 
-        public AntiAirWeaponModBase()
+        public bool InterceptHostileProjectiles
+        {
+            get { return this.SettingsData == null || this.SettingsData.interceptHostileProjectiles; }
+        }
+
+        public bool InterceptUnknownSkyfallers
+        {
+            get { return this.SettingsData != null && this.SettingsData.interceptUnknownSkyfallers; }
+        }
+
+        public AntiAirWeaponMod(ModContentPack content) : base(content)
         {
             Instance = this;
+            this.settings = this.GetSettings<AntiAirWeaponSettings>();
+            this.RefreshCachedSettings();
         }
 
-        public override string ModIdentifier => "AntiAirWeaponForked";
-
-        public static void RegisterTickAction(Action action)
+        public string ModIdentifier
         {
-            TickActions.Add(action);
+            get { return "AntiAirWeaponForked"; }
         }
 
-        public override void Tick(int currentTick)
+        private AntiAirWeaponSettings SettingsData
         {
-            foreach (Action action in TickActions)
+            get
             {
-                action();
+                if (this.settings == null)
+                {
+                    this.settings = this.GetSettings<AntiAirWeaponSettings>();
+                }
+                return this.settings;
             }
-            TickActions.Clear();
         }
 
-        public override void DefsLoaded()
+        private float RuleRowHeight
         {
-            base.DefsLoaded();
-            this.interceptHostilePods = this.Settings.GetHandle<bool>(
-                "interceptHostilePods",
+            get
+            {
+                return this.SettingsData != null && this.SettingsData.showAdvancedDefNameEditor
+                    ? RuleRowHeightExpanded
+                    : RuleRowHeightCollapsed;
+            }
+        }
+
+        public override string SettingsCategory()
+        {
+            return "AntiAirWeapon[forked]";
+        }
+
+        public override void DoSettingsWindowContents(Rect inRect)
+        {
+            AntiAirWeaponSettings data = this.SettingsData;
+            if (data == null)
+            {
+                Widgets.Label(inRect, "Anti-Air Weapon settings are not initialized.");
+                return;
+            }
+
+            bool changed = false;
+            float viewWidth = Mathf.Max(100f, inRect.width - 16f);
+            Rect viewRect = new Rect(0f, 0f, viewWidth, Mathf.Max(inRect.height, this.GetSettingsViewHeight()));
+            Widgets.BeginScrollView(inRect, ref this.settingsScrollPosition, viewRect, true);
+
+            Listing_Standard listing = new Listing_Standard();
+            listing.Begin(viewRect);
+            this.DrawCheckbox(
+                listing,
                 "拦截敌对飞行舱",
                 "启用后，防空炮会拦截识别为敌对派系的飞行舱或空投舱。",
-                true);
-            this.interceptHostileProjectiles = this.Settings.GetHandle<bool>(
-                "interceptHostileProjectiles",
+                ref data.interceptHostilePods,
+                ref changed);
+            this.DrawCheckbox(
+                listing,
                 "拦截敌对炮弹",
                 "启用后，防空炮会拦截能够识别为敌对派系的高空炮弹。",
-                true);
-            this.interceptUnknownSkyfallers = this.Settings.GetHandle<bool>(
-                "interceptUnknownSkyfallers",
+                ref data.interceptHostileProjectiles,
+                ref changed);
+            this.DrawCheckbox(
+                listing,
                 "拦截未知 Skyfaller",
                 "启用后，未实现飞行舱接口、也无法从内容物识别派系的 Skyfaller 会按默认可拦截目标处理。",
-                false);
-            this.showAdvancedDefNameEditor = this.Settings.GetHandle<bool>(
-                "showAdvancedDefNameEditor",
+                ref data.interceptUnknownSkyfallers,
+                ref changed);
+            this.DrawCheckbox(
+                listing,
                 "高级：显示原始 defName",
                 "显示底层 defName 文本编辑框。普通配置建议使用管理窗口选择目标。",
-                false);
-            this.neverInterceptDefs = this.Settings.GetHandle<string>(
-                "neverInterceptDefs",
-                "永不拦截",
-                "命中列表的飞行物永远不会被防空炮拦截。",
-                string.Empty);
-            this.alwaysInterceptDefs = this.Settings.GetHandle<string>(
-                "alwaysInterceptDefs",
-                "总是拦截",
-                "命中列表的飞行物会被防空炮强制拦截，不再检查派系。",
-                string.Empty);
-            this.interceptHostileDefs = this.Settings.GetHandle<string>(
-                "interceptHostileDefs",
-                "按敌对关系拦截",
-                "命中列表的飞行物会尝试解析派系，只拦截敌对目标。",
-                string.Empty);
-            this.ConfigureRuleHandle(this.neverInterceptDefs, InterceptRuleGroup.NeverIntercept);
-            this.ConfigureRuleHandle(this.alwaysInterceptDefs, InterceptRuleGroup.AlwaysIntercept);
-            this.ConfigureRuleHandle(this.interceptHostileDefs, InterceptRuleGroup.HostileIntercept);
-            this.RefreshCachedSettings();
-        }
+                ref data.showAdvancedDefNameEditor,
+                ref changed);
 
-        public override void SettingsChanged()
-        {
-            base.SettingsChanged();
-            this.RefreshCachedSettings();
-        }
+            listing.Gap(8f);
+            this.DrawRuleHandle(listing.GetRect(this.RuleRowHeight), InterceptRuleGroup.NeverIntercept, ref changed);
+            listing.Gap(6f);
+            this.DrawRuleHandle(listing.GetRect(this.RuleRowHeight), InterceptRuleGroup.AlwaysIntercept, ref changed);
+            listing.Gap(6f);
+            this.DrawRuleHandle(listing.GetRect(this.RuleRowHeight), InterceptRuleGroup.HostileIntercept, ref changed);
+            listing.End();
 
-        public override void WorldLoaded()
-        {
-            base.WorldLoaded();
+            Widgets.EndScrollView();
+            if (changed)
+            {
+                this.ApplySettingsChanged(true);
+            }
+
+            base.DoSettingsWindowContents(inRect);
         }
 
         public bool ShouldNeverIntercept(Thing thing)
@@ -120,8 +198,7 @@ namespace AntiAirWeapon
 
         public List<string> GetRuleDefNames(InterceptRuleGroup group)
         {
-            SettingHandle<string> handle = this.GetRuleHandle(group);
-            return ParseDefNameListOrdered(handle?.Value);
+            return ParseDefNameListOrdered(this.GetRuleDefNamesRaw(group));
         }
 
         public HashSet<string> GetRuleDefNameSet(InterceptRuleGroup group)
@@ -193,7 +270,7 @@ namespace AntiAirWeapon
             this.SetRuleDefNames(InterceptRuleGroup.NeverIntercept, lists[InterceptRuleGroup.NeverIntercept]);
             this.SetRuleDefNames(InterceptRuleGroup.AlwaysIntercept, lists[InterceptRuleGroup.AlwaysIntercept]);
             this.SetRuleDefNames(InterceptRuleGroup.HostileIntercept, lists[InterceptRuleGroup.HostileIntercept]);
-            this.RefreshCachedSettings();
+            this.ApplySettingsChanged(true);
         }
 
         public void RemoveRuleDefName(InterceptRuleGroup group, string defName)
@@ -208,7 +285,7 @@ namespace AntiAirWeapon
                 .Where(item => !string.Equals(item, normalizedDefName, StringComparison.OrdinalIgnoreCase))
                 .ToList();
             this.SetRuleDefNames(group, names);
-            this.RefreshCachedSettings();
+            this.ApplySettingsChanged(true);
         }
 
         public int CountMissingRuleDefNames(InterceptRuleGroup group)
@@ -246,31 +323,22 @@ namespace AntiAirWeapon
             return storage != null ? storage.GetObservedAirTargets() : Enumerable.Empty<ObservedAirTarget>();
         }
 
-        private void RefreshCachedSettings()
+        private void DrawCheckbox(Listing_Standard listing, string label, string tooltip, ref bool value, ref bool changed)
         {
-            this.neverInterceptDefNames = ParseDefNameList(this.neverInterceptDefs?.Value);
-            this.alwaysInterceptDefNames = ParseDefNameList(this.alwaysInterceptDefs?.Value);
-            this.interceptHostileDefNames = ParseDefNameList(this.interceptHostileDefs?.Value);
-        }
-
-        private void ConfigureRuleHandle(SettingHandle<string> handle, InterceptRuleGroup group)
-        {
-            if (handle == null)
+            bool previous = value;
+            listing.CheckboxLabeled(label, ref value, tooltip);
+            if (previous != value)
             {
-                return;
+                changed = true;
             }
-
-            handle.CustomDrawerHeight = 70f;
-            handle.CustomDrawer = rect => this.DrawRuleHandle(rect, group, handle);
         }
 
-        private bool DrawRuleHandle(Rect rect, InterceptRuleGroup group, SettingHandle<string> handle)
+        private void DrawRuleHandle(Rect rect, InterceptRuleGroup group, ref bool changed)
         {
-            bool changed = false;
             Rect topRect = new Rect(rect.x, rect.y + 2f, rect.width, 30f);
             int count = this.GetRuleDefNames(group).Count;
             int missing = this.CountMissingRuleDefNames(group);
-            string summary = count + " 项";
+            string summary = this.GetRuleTitle(group) + "：" + count + " 项";
             if (missing > 0)
             {
                 summary += "，" + missing + " 个缺失";
@@ -284,50 +352,93 @@ namespace AntiAirWeapon
                 Find.WindowStack.Add(new Dialog_InterceptTargetSelector(this, group));
             }
 
-            if (this.showAdvancedDefNameEditor != null && this.showAdvancedDefNameEditor.Value)
+            if (this.SettingsData != null && this.SettingsData.showAdvancedDefNameEditor)
             {
                 Rect textRect = new Rect(rect.x, topRect.yMax + 6f, rect.width, 28f);
-                string oldValue = handle.Value ?? string.Empty;
+                string oldValue = this.GetRuleDefNamesRaw(group) ?? string.Empty;
                 string newValue = Widgets.TextField(textRect, oldValue);
                 if (!string.Equals(oldValue, newValue, StringComparison.Ordinal))
                 {
-                    handle.Value = newValue;
-                    this.RefreshCachedSettings();
+                    this.SetRuleDefNamesRaw(group, newValue);
                     changed = true;
                 }
             }
             else
             {
                 Rect hintRect = new Rect(rect.x, topRect.yMax + 8f, rect.width, 22f);
+                Color oldColor = GUI.color;
                 GUI.color = Color.gray;
                 Widgets.Label(hintRect, "展开高级选项可直接编辑 defName。");
-                GUI.color = Color.white;
+                GUI.color = oldColor;
             }
-
-            return changed;
         }
 
-        private SettingHandle<string> GetRuleHandle(InterceptRuleGroup group)
+        private void ApplySettingsChanged(bool writeSettings)
         {
+            this.RefreshCachedSettings();
+            if (writeSettings)
+            {
+                this.WriteSettings();
+            }
+        }
+
+        private float GetSettingsViewHeight()
+        {
+            return 190f + ((this.RuleRowHeight + 6f) * 3f);
+        }
+
+        private void RefreshCachedSettings()
+        {
+            this.neverInterceptDefNames = ParseDefNameList(this.GetRuleDefNamesRaw(InterceptRuleGroup.NeverIntercept));
+            this.alwaysInterceptDefNames = ParseDefNameList(this.GetRuleDefNamesRaw(InterceptRuleGroup.AlwaysIntercept));
+            this.interceptHostileDefNames = ParseDefNameList(this.GetRuleDefNamesRaw(InterceptRuleGroup.HostileIntercept));
+        }
+
+        private string GetRuleDefNamesRaw(InterceptRuleGroup group)
+        {
+            AntiAirWeaponSettings data = this.SettingsData;
+            if (data == null)
+            {
+                return string.Empty;
+            }
+
             switch (group)
             {
                 case InterceptRuleGroup.NeverIntercept:
-                    return this.neverInterceptDefs;
+                    return data.neverInterceptDefs;
                 case InterceptRuleGroup.AlwaysIntercept:
-                    return this.alwaysInterceptDefs;
+                    return data.alwaysInterceptDefs;
                 case InterceptRuleGroup.HostileIntercept:
-                    return this.interceptHostileDefs;
+                    return data.interceptHostileDefs;
                 default:
-                    return null;
+                    return string.Empty;
             }
         }
 
         private void SetRuleDefNames(InterceptRuleGroup group, IEnumerable<string> defNames)
         {
-            SettingHandle<string> handle = this.GetRuleHandle(group);
-            if (handle != null)
+            this.SetRuleDefNamesRaw(group, SerializeDefNameList(defNames));
+        }
+
+        private void SetRuleDefNamesRaw(InterceptRuleGroup group, string rawValue)
+        {
+            AntiAirWeaponSettings data = this.SettingsData;
+            if (data == null)
             {
-                handle.Value = SerializeDefNameList(defNames);
+                return;
+            }
+
+            switch (group)
+            {
+                case InterceptRuleGroup.NeverIntercept:
+                    data.neverInterceptDefs = rawValue ?? string.Empty;
+                    break;
+                case InterceptRuleGroup.AlwaysIntercept:
+                    data.alwaysInterceptDefs = rawValue ?? string.Empty;
+                    break;
+                case InterceptRuleGroup.HostileIntercept:
+                    data.interceptHostileDefs = rawValue ?? string.Empty;
+                    break;
             }
         }
 
@@ -372,13 +483,6 @@ namespace AntiAirWeapon
             return string.IsNullOrWhiteSpace(defName) ? string.Empty : defName.Trim();
         }
 
-        private HugsLib.Settings.SettingHandle<bool> interceptHostilePods;
-        private HugsLib.Settings.SettingHandle<bool> interceptHostileProjectiles;
-        private HugsLib.Settings.SettingHandle<bool> interceptUnknownSkyfallers;
-        private HugsLib.Settings.SettingHandle<bool> showAdvancedDefNameEditor;
-        private HugsLib.Settings.SettingHandle<string> neverInterceptDefs;
-        private HugsLib.Settings.SettingHandle<string> alwaysInterceptDefs;
-        private HugsLib.Settings.SettingHandle<string> interceptHostileDefs;
         private HashSet<string> neverInterceptDefNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private HashSet<string> alwaysInterceptDefNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         private HashSet<string> interceptHostileDefNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

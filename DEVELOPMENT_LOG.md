@@ -1,5 +1,36 @@
 # Development Log
 
+## 2026-05-04 - Native settings migration
+
+### Goal
+
+- Build the next-generation fork without HugsLib as a prerequisite.
+- Preserve the existing interception rule behavior and target selector workflow.
+
+### Implementation
+
+- Replaced the HugsLib `ModBase` entry point with RimWorld's native `Verse.Mod`.
+- Added `AntiAirWeaponSettings : ModSettings` and moved saved values to `Scribe_Values.Look`.
+- Rebuilt the Mod Options page with native `DoSettingsWindowContents`, `Listing_Standard`, and `Widgets`.
+- Kept the three `defName` rule lists and target selector API stable for existing gameplay code.
+- Removed HugsLib references from the project file, build scripts, mod metadata, and Workshop description.
+- Replaced broad `PatchAll` startup with explicit Harmony patch registration so missing optional targets are skipped instead of breaking the whole mod.
+- Updated the local Workshop test folder to the new Workshop ID `3715925883`; the old `2802147499` source package was removed.
+
+### Verification
+
+- Release build passes against RimWorld 1.6 managed assemblies.
+- The rebuilt assembly no longer references HugsLib.
+- XML files parse successfully as UTF-8 XML.
+- Minimal in-game startup smoke test passes with `Harmony + Core/DLC + AntiAirWeapon[forked]`.
+- Player log shows `[AntiAirWeaponForked] Harmony patches applied: 3` and no AntiAirWeapon startup errors.
+
+### Repository Cleanup
+
+- Removed the old tracked Workshop package directory `2802147499/`.
+- Treat `3715925883/` as the local generated Workshop upload folder and exclude it from git.
+- Treat `mod_upload.vdf` as a local SteamCMD descriptor because it contains machine-specific absolute paths.
+
 ## 2026-04-28 - RimWorld 1.6 load failure fixed
 
 ### Symptoms

@@ -1,4 +1,4 @@
-# Build outputs
+# Build outputs and local caches
 bin/
 obj/
 dist/
@@ -6,6 +6,7 @@ artifacts/
 TestResults/
 .dotnet-home/
 .nuget/
+1.6/Assemblies/
 
 # Local references copied from game installs
 References/
@@ -29,6 +30,10 @@ Thumbs.db
 *.pidb
 *.mdb
 
-# Local workshop packages
+# Local Workshop and SteamCMD files
+2802147499/
 2802147499.zip
 AntiAirWeaponForked/
+3715925883/
+mod_upload.vdf
+PublishedFileId.txt
