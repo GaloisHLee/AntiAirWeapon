@@ -191,10 +191,10 @@ macOS / bash 环境可执行：
 - 生成 `artifacts/release/AntiAirWeaponForked/`
 - 复制 `About`、`Languages`、`Sounds`、`Textures`
 - 将 `1.6/Defs` 与新编译的 `1.6/Assemblies/AntiAirWeapon.dll` 一起打包
-- 尝试额外生成 `artifacts/release/AntiAirWeaponForked.zip`
+- 尝试额外生成 `artifacts/release/AntiAirWeapon[forked].zip`
 - 同步刷新 `3715925883/`，这个目录对应当前 Workshop ID，可直接用于游戏内测试和 Workshop 上传
 
-当前 fork 修改版的 zip 产物是 `artifacts/release/AntiAirWeaponForked.zip`；SteamCMD 上传优先使用 `3715925883/`。
+当前 fork 修改版的 zip 产物是 `artifacts/release/AntiAirWeapon[forked].zip`；SteamCMD 上传优先使用 `3715925883/`。
 
 ## SteamCMD 上传
 

@@ -3,16 +3,21 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-PACKAGE_ROOT="$ROOT_DIR/artifacts/release/AntiAirWeaponForked"
+MOD_NAME="AntiAirWeapon[forked]"
+PACKAGE_ROOT="$ROOT_DIR/artifacts/release/$MOD_NAME"
 ASSEMBLY_SOURCE="$ROOT_DIR/dist/Assemblies/AntiAirWeapon.dll"
 PDB_SOURCE="$ROOT_DIR/dist/Assemblies/AntiAirWeapon.pdb"
 VERSIONED_ROOT="$PACKAGE_ROOT/1.6"
-ZIP_PATH="$ROOT_DIR/artifacts/release/AntiAirWeaponForked.zip"
+ZIP_PATH="$ROOT_DIR/artifacts/release/$MOD_NAME.zip"
+LEGACY_PACKAGE_ROOT="$ROOT_DIR/artifacts/release/AntiAirWeaponForked"
+LEGACY_ZIP_PATH="$ROOT_DIR/artifacts/release/AntiAirWeaponForked.zip"
 STEAM_TEST_ROOT="$ROOT_DIR/3715925883"
 
 "$SCRIPT_DIR/build-local.sh" Release
 
 rm -rf "$PACKAGE_ROOT"
+rm -rf "$LEGACY_PACKAGE_ROOT"
+rm -f "$LEGACY_ZIP_PATH"
 mkdir -p "$PACKAGE_ROOT" "$VERSIONED_ROOT/Assemblies"
 
 cp -R "$ROOT_DIR/About" "$PACKAGE_ROOT/About"
@@ -54,7 +59,7 @@ rm -f "$ZIP_PATH"
 if command -v zip >/dev/null 2>&1; then
   (
     cd "$ROOT_DIR/artifacts/release"
-    zip -rq "AntiAirWeaponForked.zip" "AntiAirWeaponForked"
+    zip -rq "$MOD_NAME.zip" "$MOD_NAME"
   )
 else
   echo "zip command not found. Release folder prepared at $PACKAGE_ROOT"

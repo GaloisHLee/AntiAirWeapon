@@ -6,11 +6,14 @@ $ErrorActionPreference = "Stop"
 
 $ScriptDir = Split-Path -Parent $PSCommandPath
 $RootDir = Split-Path -Parent $ScriptDir
-$PackageRoot = Join-Path $RootDir "artifacts/release/AntiAirWeaponForked"
+$ModName = "AntiAirWeapon[forked]"
+$PackageRoot = Join-Path $RootDir "artifacts/release/$ModName"
 $VersionedRoot = Join-Path $PackageRoot "1.6"
 $AssemblySource = Join-Path $RootDir "dist/Assemblies/AntiAirWeapon.dll"
 $PdbSource = Join-Path $RootDir "dist/Assemblies/AntiAirWeapon.pdb"
-$ZipPath = Join-Path $RootDir "artifacts/release/AntiAirWeaponForked.zip"
+$ZipPath = Join-Path $RootDir "artifacts/release/$ModName.zip"
+$LegacyPackageRoot = Join-Path $RootDir "artifacts/release/AntiAirWeaponForked"
+$LegacyZipPath = Join-Path $RootDir "artifacts/release/AntiAirWeaponForked.zip"
 $SteamTestRoot = Join-Path $RootDir "3715925883"
 
 & (Join-Path $ScriptDir "build-local.ps1") -Configuration Release
@@ -23,6 +26,8 @@ if (-not (Test-Path -LiteralPath $AssemblySource -PathType Leaf)) {
 }
 
 Remove-Item -LiteralPath $PackageRoot -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath $LegacyPackageRoot -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath $LegacyZipPath -Force -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Path $PackageRoot -Force | Out-Null
 New-Item -ItemType Directory -Path (Join-Path $VersionedRoot "Assemblies") -Force | Out-Null
 
